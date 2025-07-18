@@ -1,0 +1,29 @@
+{% extends "account.html" %}
+
+{% block content %}
+
+<form class="form" action="{% url 'login' %}" method="post">
+    <h1>Вход</h1>
+
+    <p>
+        <label for="id_email">Email address:</label>
+        <input type="email" name="email" maxlength="254" id="id_email">                
+    </p>
+
+    <p>
+        <label for="id_password">Password:</label>
+        <input type="password" name="password" required="" id="id_password">
+    </p>
+
+
+    {% csrf_token %}
+    <div class="div-submit">
+        <input class="submit" type="submit" value="Зарегистрироваться">
+    </div>
+</form>
+
+{% endblock content %}
+
+
+СМОТРИ 
+https://www.youtube.com/watch?v=nfYlY5jEYPo 

@@ -23,3 +23,6 @@ def path_to_user_directory(instance, filename):
 class UserData(models.Model):
     about_myself = models.CharField(max_length=500, verbose_name='О себе')
     photo = models.ImageField(upload_to=path_to_user_directory, verbose_name='Фото')
+
+
+# это всё должно быть в main.models !!!!
