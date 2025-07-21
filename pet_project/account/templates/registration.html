@@ -6,31 +6,35 @@
     <h1>Регистрация</h1>
     <p>
         <label for="id_username">Имя :</label>
-        <input type="text" name="username" maxlength="150" required="" aria-describedby="id_username_helptext" id="id_username">             
+        <input type="text" name="username" maxlength="150" required="" aria-describedby="id_username_helptext" id="id_username"> 
+        {{ from.username.errors }}            
     </p>
 
 
     <p>
         <label for="id_first_name">First name</label>
-        <input type="text" name="first_name" maxlength="150" id="id_first_name">             
+        <input type="text" name="first_name" maxlength="150" id="id_first_name">   
+        {{ from.first_name.errors }}            
     </p>
 
 
     <p>
         <label for="id_email">Email address:</label>
-        <input type="email" name="email" maxlength="254" id="id_email">                
+        <input type="email" name="email" maxlength="254" id="id_email">  
+        {{ from.email.errors }}                
     </p>
 
 
     <p>
         <label for="id_password">Password:</label>
-        <input type="password" name="password" required="" id="id_password">
+        <input type="password" name="password" required id="id_password">
+        {{ from.password.errors }}  
     </p>
 
 
     <p>
         <label for="id_password2">Repeat password:</label>
-        <input type="password" name="password2" required="" id="id_password2">
+        <input type="password" name="password2" required id="id_password2"> 
     </p>
 
     {% csrf_token %}

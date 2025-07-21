@@ -9,7 +9,7 @@ from account.forms import *
 
 class RegisterUser(CreateView):
     form_class = UserRegistrationForm  # UserCreationForm - функция джанго.
-    template_name = 'account/registration.html'
+    template_name = 'registration.html'
     success_url = reverse_lazy('login')
 
 
@@ -18,12 +18,15 @@ class RegisterUser(CreateView):
 
 def login_user(request):
     if request.POST:
-        username = request.POST['username']
+        email = request.POST['email']
         password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, email=email, password=password)
         if user is not None:
             login(request, user=user)
-            return redirect('NAME_OF_URLS')
+            return redirect('login')
+    return render(request, 'login.html')
+
 
 def logout_user(request):
-    pass
+    logout(request)
+    redirect('login')

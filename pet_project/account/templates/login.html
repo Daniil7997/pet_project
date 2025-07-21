@@ -2,6 +2,11 @@
 
 {% block content %}
 
+{% if request.user.is_authenticated %}
+{{ request.user }}
+{% endif %}
+
+
 <form class="form" action="{% url 'login' %}" method="post">
     <h1>Вход</h1>
 
@@ -18,9 +23,11 @@
 
     {% csrf_token %}
     <div class="div-submit">
-        <input class="submit" type="submit" value="Зарегистрироваться">
+        <input class="submit" type="submit" value="Войти">
     </div>
 </form>
+
+<h3>СДЕЛАЙ КАПЧУ</h3>
 
 {% endblock content %}
 
