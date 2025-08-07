@@ -31,14 +31,20 @@ div.content-block {
     justify-content: center;
 }
 
-form.form {
+form {
     display: flex;
     justify-content: center;
     flex-direction: column;
 
 }
 
-form.form > p {
+form > div.form {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+form > div.form > p {
     margin: 4px;
     display: flex;
     justify-content: space-between;

@@ -8,7 +8,7 @@ from account.forms import *
 
 
 class RegisterUser(CreateView):
-    form_class = UserRegistrationForm  # UserCreationForm - функция джанго.
+    form_class = RegisterUserForm  # UserCreationForm - функция джанго.
     template_name = 'registration.html'
     success_url = reverse_lazy('login')
 

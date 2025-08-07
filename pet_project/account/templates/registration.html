@@ -2,41 +2,49 @@
 
 {% block content %}
 
-<form class="form" action="{% url 'registration' %}" method="post">
+<form action="{% url 'registration' %}" method="post">
     <h1>Регистрация</h1>
-    <p>
-        <label for="id_username">Имя :</label>
-        <input type="text" name="username" maxlength="150" required="" aria-describedby="id_username_helptext" id="id_username"> 
-        {{ from.username.errors }}            
-    </p>
 
+    <div class="form">    
+        <p>
+            {{ form.username.label_tag }} 
+            {{ form.username }}
+        </p>
+        <p>
+            {{ form.first_name.label_tag }} 
+            {{ form.first_name }}
+        </p>
+        <p>
+            {{ form.last_name.label_tag }} 
+            {{ form.last_name }}
+        </p>
+        <p>
+            {{ form.email.label_tag }} 
+            {{ form.email }}
+        </p>
+        <p>
+            {{ form.password.label_tag }} 
+            {{ form.password }}
+        </p>
+        <p>
+            {{ form.password2.label_tag }} 
+            {{ form.password2 }}
+        </p>
+        <div>
+            {% if form.errors %}
+                {% for fielf, errors in form.errors.items %}
+                    {% for error in errors %}
+                    <p>
+                        {{error}}
+                    </p>
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
 
-    <p>
-        <label for="id_first_name">First name</label>
-        <input type="text" name="first_name" maxlength="150" id="id_first_name">   
-        {{ from.first_name.errors }}            
-    </p>
+        </div>
+    </div>
 
-
-    <p>
-        <label for="id_email">Email address:</label>
-        <input type="email" name="email" maxlength="254" id="id_email">  
-        {{ from.email.errors }}                
-    </p>
-
-
-    <p>
-        <label for="id_password">Password:</label>
-        <input type="password" name="password" required id="id_password">
-        {{ from.password.errors }}  
-    </p>
-
-
-    <p>
-        <label for="id_password2">Repeat password:</label>
-        <input type="password" name="password2" required id="id_password2"> 
-    </p>
-
+    
     {% csrf_token %}
     <div class="div-submit">
         <input class="submit" type="submit" value="Зарегистрироваться">
@@ -44,3 +52,8 @@
 </form>
 
 {% endblock content %}
+
+
+
+
+https://ru.stackoverflow.com/questions/1471184/django-%D0%BA%D0%B0%D0%BA-%D0%BF%D0%BE%D0%BC%D0%B5%D0%BD%D1%8F%D1%82%D1%8C-%D1%81%D0%BE%D0%BE%D0%B1%D1%89%D0%B5%D0%BD%D0%B8%D1%8F-%D0%BE%D0%B1-%D0%BE%D1%88%D0%B8%D0%B1%D0%BA%D0%B0%D1%85-please-fill-out-this-field
