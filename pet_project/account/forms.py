@@ -4,27 +4,56 @@ https://pocoz.gitbooks.io/django-v-primerah/content/glava-4-sozdanie-social-webs
 """
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import User
 from django import forms
 
 from .models import UserList
 
-class RegisterUserForm(UserCreationForm):
+
+from django.contrib.auth.models import AbstractUser
+
+class Test(UserCreationForm):
+    pass
+
+
+class RegisterUserForm(forms.ModelForm):
+
+    password2 = forms.CharField(label='Повторите пароль', widget=forms.PasswordInput)
+
     class Meta:
-        model = UserList  # - модель которая работает с таблицей auth_user в БД
-        fields = ('email', 'password', 'password2')
+        model = UserList
+        fields = ('email', 'password')
         labels = {
             'password': 'Пароль',
-            'password2': 'Повторите пароль',
             'email': 'Электронная почта',
         }
-        help_texts = {
-            'username': None,
+        widgets = {
+            'password': forms.PasswordInput,
+            'password2': forms.PasswordInput,
         }
 
-    def clean_password(self):
+    def clean_password2(self):
         cd = self.cleaned_data
         if cd['password'] != cd['password2']:
-            raise forms.ValidationError('Passwords don\'t match.')
-        cd['password'] = make_password(cd['password'])
+            raise forms.ValidationError('Пароли не совпадают')
+        cd['password'] = self.hash_password(cd['password'])
         return cd['password']
+
+    @staticmethod
+    def hash_password(raw_password):
+        return make_password(raw_password)
+
+
+class LoginUserForm(forms.ModelForm):
+    class Meta:
+        model = UserList
+        fields = ('email', 'password')
+        labels = {
+            'password': 'Пароль',
+            'email': 'Электронная почта',
+        }
+        widgets = {
+            'password': forms.PasswordInput,
+        }
+
+    # email = forms.EmailField(label='Электронная почта')
+    # password = forms.CharField(label='Пароль', widget=forms.PasswordInput)

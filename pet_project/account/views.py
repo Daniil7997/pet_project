@@ -1,3 +1,4 @@
+from django.contrib.auth.views import LoginView
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
@@ -17,16 +18,30 @@ class RegisterUser(CreateView):
 
 
 def login_user(request):
+    form = LoginUserForm()
     if request.POST:
+        form = LoginUserForm(request.POST)
         email = request.POST['email']
         password = request.POST['password']
-        user = authenticate(request, email=email, password=password)
+        user = authenticate(email=email, password=password)
         if user is not None:
             login(request, user=user)
+            print('отработал login')
             return redirect('login')
-    return render(request, 'login.html')
+
+    context = {
+        'form': form,
+    }
+    return render(request, 'login.html', context=context)
 
 
 def logout_user(request):
     logout(request)
     redirect('login')
+
+
+class LoginUser(LoginView):
+
+    form_class = LoginUserForm
+    template_name = 'login.html'
+    # success_url =

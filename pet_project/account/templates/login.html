@@ -10,25 +10,43 @@
 <form class="form" action="{% url 'login' %}" method="post">
     <h1>Вход</h1>
     
-    <p>
-        <label for="id_email">Email address:</label>
-        <input type="email" name="email" maxlength="254" id="id_email">                
-    </p>
-
-    <p>
-        <label for="id_password">Password:</label>
-        <input type="password" name="password" required="" id="id_password">
-    </p>
-
-
-    {% csrf_token %}
+    <div class="form">    
+        <p>
+            {{ form.email.label_tag }} 
+            {{ form.email }}
+        </p>
+        <p>
+            {{ form.password.label_tag }} 
+            {{ form.password }}
+        </p>
+        <div>
+            {% if form.errors %}
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                    <p>
+                        {{field}}
+                        {{error}}
+                    </p>
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+            {% if form.non_field_errors %}
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+        {% csrf_token %}
     <div class="div-submit">
         <input class="submit" type="submit" value="Войти">
     </div>
-</form>
 
 <h3>СДЕЛАЙ КАПЧУ</h3>
-
+    {% if request.user.is_authenticated %}
+    {{ request.user.email }}
+    {% endif %}
+</form>
 {% endblock content %}
 
 
