@@ -26,7 +26,6 @@ def login_user(request):
         user = authenticate(email=email, password=password)
         if user is not None:
             login(request, user=user)
-            print('отработал login')
             return redirect('login')
 
     context = {
@@ -38,10 +37,3 @@ def login_user(request):
 def logout_user(request):
     logout(request)
     redirect('login')
-
-
-class LoginUser(LoginView):
-
-    form_class = LoginUserForm
-    template_name = 'login.html'
-    # success_url =

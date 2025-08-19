@@ -43,6 +43,9 @@
     </div>
 
 <h3>СДЕЛАЙ КАПЧУ</h3>
+    {{ request.user }}
+    {{ request.user.is_authenticated }}
+    {{ request.user.email }}
     {% if request.user.is_authenticated %}
     {{ request.user.email }}
     {% endif %}
