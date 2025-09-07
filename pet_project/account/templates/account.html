@@ -13,6 +13,14 @@
         <div class="content-block">
             
             {% if request.user.is_authenticated %}
+            <p>
+                <a href="{% url 'profile_change' %}">Изменить профиль</a>
+            </p>
+            {% endif %}
+
+
+            
+            {% if request.user.is_authenticated %}
             {{ request.user }}
             {% endif %}
             

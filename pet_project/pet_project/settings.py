@@ -15,7 +15,6 @@ import os
 from django.conf import settings
 from django.conf.urls.static import static
 
-import account
 from config.settings_config import *
 
 
@@ -120,10 +119,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-    'account.static',
-]
+STATICFILES_DIRS = []
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -138,6 +134,6 @@ AUTHENTICATION_BACKENDS = [
     "account.authentication.EmailAuthBackend",
 ]
 
-AUTH_USER_MODEL = 'account.UserList'
+AUTH_USER_MODEL = 'account.UserAuth'
 
 print(BASE_DIR)

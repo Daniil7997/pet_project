@@ -5,8 +5,8 @@
 <form action="{% url 'registration' %}" method="post">
     <h1>Регистрация</h1>
 
-    <div class="form">  
-     
+    <div class="form"> 
+        <!-- модель UserAuth --> 
         <p>
             {{ form.email.label_tag }} 
             {{ form.email }}
@@ -20,6 +20,29 @@
             {{ form.password2 }}
         </p>
 
+        
+        <!-- модель Profile -->
+        <p>
+            {{ form.name.label_tag }}
+            {{ form.name }}
+        </p>
+        <p>
+            {{ form.birthday.label_tag }}
+            {{ form.birthday }}
+        </p>
+        <p>
+            {{ form.sex.label_tag }}
+            {{ form.sex }}
+        </p>
+        <p>
+            {{ form.i_search.label_tag }}
+            {{ form.i_search }}
+        </p>
+
+
+
+
+        <!-- вывод ошибок -->
         <div>
             {% if form.errors %}
                 {% for field, errors in form.errors.items %}

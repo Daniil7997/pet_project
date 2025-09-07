@@ -1,26 +1,29 @@
-"""
-https://pocoz.gitbooks.io/django-v-primerah/content/glava-4-sozdanie-social-website/reistratsiya-polzovatelei-i-profili-polzovatelei/registratsiya-polzovatelei.html
-https://pocoz.gitbooks.io/django-v-primerah/content/glava-4-sozdanie-social-website/registratsiya-polzovatelei-i-profili-polzovatelei/registratsiya-polzovatelei.html
-"""
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.hashers import make_password
+from datetime import date
+
+from django.contrib.auth import get_user_model
 from django import forms
+from django.contrib.auth.hashers import make_password
 
-from .models import UserList
-
-
-from django.contrib.auth.models import AbstractUser
-
-class Test(UserCreationForm):
-    pass
+from .models import *
 
 
 class RegisterUserForm(forms.ModelForm):
 
+    # -- данные для модели Profile приложения account
+
+    sex_choice = {'M': 'Мужской', 'W': 'Женский'}
+    i_search_choice = {'M': 'Парня', 'W': 'Девушку'}
+
+    sex = forms.ChoiceField(label='Пол', choices=sex_choice, widget=forms.RadioSelect)
+    i_search = forms.ChoiceField(label='Я ищу', choices=i_search_choice, widget=forms.RadioSelect)
+    birthday = forms.DateField(label='Дата рождения', widget=forms.DateInput(attrs={'type': 'date'}))
+    name = forms.CharField(label='Имя')
+
+    # -- поле для подтверждения пароля
     password2 = forms.CharField(label='Повторите пароль', widget=forms.PasswordInput)
 
     class Meta:
-        model = UserList
+        model = get_user_model()
         fields = ('email', 'password')
         labels = {
             'password': 'Пароль',
@@ -28,24 +31,56 @@ class RegisterUserForm(forms.ModelForm):
         }
         widgets = {
             'password': forms.PasswordInput,
-            'password2': forms.PasswordInput,
         }
+
+    def clean_isearch(self):
+        cd = self.cleaned_data
+        if 'isearch' not in cd:
+            raise forms.ValidationError('Выберите кого вы хотите найти.')
+        return cd['isearch']
 
     def clean_password2(self):
         cd = self.cleaned_data
+        if 'password2' not in cd:
+            raise forms.ValidationError('Введите пароль')
+
         if cd['password'] != cd['password2']:
-            raise forms.ValidationError('Пароли не совпадают')
-        cd['password'] = self.hash_password(cd['password'])
+            raise forms.ValidationError('Пароли не совпадают.')
+        # хеширование пароля
+        cd['password'] = make_password(cd['password'])
         return cd['password']
 
-    @staticmethod
-    def hash_password(raw_password):
-        return make_password(raw_password)
+    def clean_sex(self):
+        cd = self.cleaned_data
+        if 'sex' not in cd:
+            raise forms.ValidationError('Выберите пол.')
+        return cd['sex']
+
+    def clean_birthday(self):
+        cd = self.cleaned_data
+        if 'birthday' not in cd:
+            raise forms.ValidationError('Введите дату рождения.')
+
+        birthday = self.cleaned_data['birthday']
+        today = date.today()
+        age = today - birthday
+        age = age.days / 365
+        if age < 18:
+            raise forms.ValidationError('Вам еще нет 18. ')
+
+        return birthday
+
+    def clean_name(self):
+        cd = self.cleaned_data
+        if 'name' not in cd:
+            raise forms.ValidationError('Введите фамилию.')
+        return cd['name']
 
 
 class LoginUserForm(forms.ModelForm):
+
     class Meta:
-        model = UserList
+        model = get_user_model()
         fields = ('email', 'password')
         labels = {
             'password': 'Пароль',
@@ -55,5 +90,11 @@ class LoginUserForm(forms.ModelForm):
             'password': forms.PasswordInput,
         }
 
-    # email = forms.EmailField(label='Электронная почта')
-    # password = forms.CharField(label='Пароль', widget=forms.PasswordInput)
+
+class ProfileData(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ('name', 'about', 'photos', 'profile_photo')
+        widgets = {
+            'about': forms.Textarea,
+        }

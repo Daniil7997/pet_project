@@ -1,0 +1,20 @@
+{% extends "account.html" %}
+
+{% block content %}
+
+<form action="{% url 'profile_change' %}" method="post">
+    <h1>Регистрация</h1>
+
+    <div class="form">  
+     
+        {{form.as_p}}
+
+    
+    {% csrf_token %}
+    <div class="div-submit">
+        <input class="submit" type="submit" value="Зарегистрироваться">
+    </div>
+</form>
+
+{% endblock content %}
+

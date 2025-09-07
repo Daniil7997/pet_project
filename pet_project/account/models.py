@@ -1,10 +1,8 @@
 from django.contrib.auth.base_user import AbstractBaseUser
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-class UserList(AbstractBaseUser):
+class UserAuth(AbstractBaseUser):
     email = models.EmailField(unique=True, max_length=50)
     is_active = models.BooleanField(default=True)  # (True/False) право на авторизацию.
 
@@ -18,20 +16,19 @@ class UserList(AbstractBaseUser):
         return self.email
 
 
-class UserData(models.Model):
-    first_name = models.CharField(max_length=20, verbose_name='Имя')
-    last_name = models.CharField(max_length=20, verbose_name='Фамилия')
-    about = models.CharField(max_length=250, verbose_name='О себе')
-    photos = models.ImageField()
-    profile_photos = models.ImageField()
-    slug = models.SlugField(max_length=50, unique=True)
+class Profile(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    sex = models.CharField()
+    name = models.CharField(max_length=20, verbose_name='Имя')
+    birthday = models.DateField(verbose_name='Дата рождения')
+    about = models.CharField(max_length=250, blank=True, verbose_name='О себе')
+    photos = models.ImageField(blank=True, verbose_name='Фото')
+    profile_photo = models.ImageField(blank=True, verbose_name='Фото профиля')
+    i_search = models.CharField(verbose_name='Я ищу')
+    auth = models.OneToOneField(UserAuth, on_delete=models.CASCADE, related_name='profile', unique=True)
 
+    def __str__(self):
+        return f'{self.name}'
 
     def get_absolute_url(self):
-        pass
-        # return f'/user_page/{self.slug}/'
-
-    def get_photo_path(self):
-        return f'{self.slug}/'
-
-
+        return f'/user_page/{self.id}/'

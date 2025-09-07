@@ -59,6 +59,15 @@ input {
     margin-left: 10px;
 }
 
+textarea {
+    color: rgb(255, 255, 255);
+    border-radius: 10px;
+    background-color: rgb(27, 8, 63);
+    padding: 4px;
+    padding-left: 6px;
+    margin-left: 10px;
+}
+
 input.submit {
     font-size: 20px;
 }
