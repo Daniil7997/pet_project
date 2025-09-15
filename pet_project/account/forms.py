@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django import forms
 from django.contrib.auth.hashers import make_password
 
-from .models import *
+from .models import Profile
 
 
 class RegisterUserForm(forms.ModelForm):
@@ -23,7 +23,7 @@ class RegisterUserForm(forms.ModelForm):
     password2 = forms.CharField(label='Повторите пароль', widget=forms.PasswordInput)
 
     class Meta:
-        model = get_user_model()
+        model = get_user_model()  # запрашивает AUTH_USER_MODEL из settings.py (UserAuth)
         fields = ('email', 'password')
         labels = {
             'password': 'Пароль',

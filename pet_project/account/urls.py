@@ -1,10 +1,17 @@
-from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
-from django.conf import settings  # -------
-from django.conf.urls.static import static  # ---------
-
-from account.views import *
+from account.views import (
+    RegisterUser,
+    login_user,
+    logout_user,
+    profile_settings,
+)
 
 
 urlpatterns = [
@@ -12,6 +19,9 @@ urlpatterns = [
     path('login/', login_user, name='login'),
     path('logout/', logout_user, name='logout'),
     path('profile_settings/', profile_settings, name='profile_change'),
+
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # JWT
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # JWT
 ]
 
 # для DEBUG = True
