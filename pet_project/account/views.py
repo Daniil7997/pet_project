@@ -23,12 +23,10 @@ class RegisterUser(CreateView):
 
     @transaction.atomic
     def db_insert(self, form_cd):
-
         UserAuth.objects.create(
             password=form_cd['password'],
             email=form_cd['email']
         )
-
         user = UserAuth.objects.get(email=form_cd['email'])
         user_id = user.id
         Profile.objects.create(
@@ -38,13 +36,6 @@ class RegisterUser(CreateView):
             i_search=form_cd['i_search'],
             auth_id=user_id,
         )
-
-    def get_context_data(self, **kwargs):
-        context_data = super().get_context_data()
-        for key, value in kwargs.items():
-            print(f'{key} <-- key\n{value} <-- value')
-            context_data[key] = value
-        return context_data
 
 # https://www.youtube.com/watch?v=nfYlY5jEYPo authenticate, login, logout.
 

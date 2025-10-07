@@ -26,3 +26,6 @@ urlpatterns = [
 
 # для DEBUG = True
 urlpatterns = urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+from rest_framework_simplejwt.serializers import TokenObtainSerializer
