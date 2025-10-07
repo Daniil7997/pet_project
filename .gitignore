@@ -1,5 +1,6 @@
 # Создано для проекта
 config/
+http/
 
 # Django #
 *.log
