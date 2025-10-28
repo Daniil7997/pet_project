@@ -19,6 +19,11 @@
             {{ form.password.label_tag }} 
             {{ form.password }}
         </p>
+
+        <p>
+            {{ form.captcha_field }}
+        </p>
+
         <div>
             {% if form.errors %}
                 {% for field, errors in form.errors.items %}

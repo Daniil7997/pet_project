@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'account',
     'main',
+    'captcha',
 ]
 
 MIDDLEWARE = [
@@ -129,8 +130,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-print(f'{MEDIA_ROOT} --- MEDIA_ROOT')
-print(f'{MEDIA_URL} --- MEDIA_URL')
 
 # аутентификация
 
@@ -189,3 +188,18 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
+
+
+# ------------------ CAPTCHA
+
+CAPTCHA_LENGTH = 4  # Количество символов в капче.
+CAPTCHA_FONT_SIZE = 15  # Размер шрифта.
+CAPTCHA_BACKGROUND_COLOR = '#1B083F'  # Цвет фона.
+CAPTCHA_FOREGROUND_COLOR = '#FFFFFF'  # Цвет текста.
+CAPTCHA_TIMEOUT = 5  # Время в минутах, через которое капча становится недействительной.
+
+CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_arcs',)
+# определяет, какие функции "шума" будут применяться к изображению капчи
+#     'captcha.helpers.noise_arcs', <--- Добавляет дуги
+#     'captcha.helpers.noise_dots', <--- Добавляет точки
+#     'captcha.helpers.noise_null', <--- Функция, которая ничего не делает

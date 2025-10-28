@@ -3,6 +3,7 @@ from datetime import date
 from django.contrib.auth import get_user_model
 from django import forms
 from django.contrib.auth.hashers import make_password
+from captcha.fields import CaptchaField, CaptchaTextInput
 
 from .models import Profile
 
@@ -21,6 +22,8 @@ class RegisterUserForm(forms.ModelForm):
 
     # -- поле для подтверждения пароля
     password2 = forms.CharField(label='Повторите пароль', widget=forms.PasswordInput)
+
+    captcha_field = CaptchaField(widget=CaptchaTextInput(attrs={'placeholder': 'Введите код'}))
 
     class Meta:
         model = get_user_model()  # запрашивает AUTH_USER_MODEL из settings.py (UserAuth)
@@ -78,6 +81,7 @@ class RegisterUserForm(forms.ModelForm):
 
 
 class LoginUserForm(forms.ModelForm):
+    captcha_field = CaptchaField(widget=CaptchaTextInput(attrs={'placeholder': 'Введите код'}))
 
     class Meta:
         model = get_user_model()

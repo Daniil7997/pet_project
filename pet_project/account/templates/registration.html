@@ -39,6 +39,10 @@
             {{ form.i_search }}
         </p>
 
+        <p>
+            {{ form.captcha_field }}
+        </p>
+
 
 
 
@@ -67,6 +71,11 @@
     {% csrf_token %}
     <div class="div-submit">
         <input class="submit" type="submit" value="Зарегистрироваться">
+    </div>
+
+
+    <div class="div-submit">
+        <a href="{% url 'login' %}">Перейти к авторизации</a>
     </div>
 </form>
 
