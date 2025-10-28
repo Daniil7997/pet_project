@@ -8,12 +8,55 @@
 }
 
 
+
 body {
     background-image: url("../img/body-background.jpg");
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
 }
+
+/* <---- навигационная панель */
+nav.nav {
+    height: 14%;
+    width: 100%;
+    background: linear-gradient(to right, rgb(27, 117, 221), pink);
+    display: flex;
+    justify-content: space-between;
+    font-size: 20px;
+}
+
+
+nav.nav > ul {
+    padding: 10px;
+    list-style-type: none;
+    display: flex;
+    border-radius: 16px;
+    margin: 15px;
+}
+
+nav.nav > ul.blue-li {
+    background-color: rgb(201, 50, 96);
+}
+
+
+nav.nav > ul.log-reg {
+    background-color: rgb(101, 46, 127);
+}
+
+
+nav.nav > ul > li {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+
+nav.nav > ul > li > a {
+    text-decoration: none;
+}
+/* ------------------ */
+
+
 
 
 div.position-content {
@@ -22,25 +65,28 @@ div.position-content {
 }
 
 div.content-block {
+    display: flex; 
+    justify-content: center;
     background: linear-gradient(to right, rgb(27, 117, 221), rgb(198, 51, 96));
     border-radius: 30px;
     margin-top: 15px;
     padding: 25px;
     font-size: 18px;
-    display: flex;
-    justify-content: center;
 }
+
 
 form {
     display: flex;
     justify-content: center;
     flex-direction: column;
+
 }
 
 form > div.form {
     display: flex;
     justify-content: space-between;
     flex-direction: column;
+    max-width: 500px;
 }
 
 form > div.form > p {
@@ -50,7 +96,6 @@ form > div.form > p {
 }
 
 input {
-    color: rgb(255, 255, 255);
     border-radius: 10px;
     background-color: rgb(27, 8, 63);
     padding: 4px;
@@ -59,7 +104,6 @@ input {
 }
 
 textarea {
-    color: rgb(255, 255, 255);
     border-radius: 10px;
     background-color: rgb(27, 8, 63);
     padding: 4px;
@@ -74,15 +118,38 @@ input.submit {
 div.div-submit {
     display: flex;
     justify-content: center;
-    margin-top: 15px;
 }
 
-div.div-submit > a {
-    color: rgb(255, 255, 255);
+div.my-profile {
+    display: flex;
+    margin-bottom: 20px;
+    padding: 10px;
+    height: auto;
+    width:auto;
+    border: solid;
     border-radius: 10px;
-    background-color: rgb(27, 8, 63);
-    padding: 4px;
-    padding-left: 6px;
-    margin-left: 10px;
-    text-decoration: none;
+    border-color: white;
+}
+
+div > p {
+    display: flex;
+}
+
+img.profile-photo {
+    max-height: 200px;
+    max-width: 200px;
+    border: solid;
+    border-radius: 10px;
+    padding: 5px;
+    margin-right: 10px;
+}
+
+p.user-name {
+    display: block;
+}
+
+p.user-about {
+    display: block;
+    overflow: hidden;
+    max-width: 1200px;
 }

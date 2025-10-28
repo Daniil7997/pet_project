@@ -92,9 +92,17 @@ class LoginUserForm(forms.ModelForm):
 
 
 class ProfileData(forms.ModelForm):
+    sex_choice = {'M': 'Мужской', 'W': 'Женский'}
+    i_search_choice = {'M': 'Парня', 'W': 'Девушку'}
+
+    sex = forms.ChoiceField(label='Пол', choices=sex_choice, widget=forms.RadioSelect)
+    i_search = forms.ChoiceField(label='Я ищу', choices=i_search_choice, widget=forms.RadioSelect)
+    birthday = forms.DateField(label='Дата рождения', widget=forms.DateInput(attrs={'type': 'date'}))
+    name = forms.CharField(label='Имя')
+
     class Meta:
         model = Profile
-        fields = ('name', 'about', 'photos', 'profile_photo')
+        fields = ('name', 'sex', 'i_search', 'birthday', 'about', 'profile_photo')
         widgets = {
             'about': forms.Textarea,
         }

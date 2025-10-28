@@ -10,24 +10,9 @@
 </head>
 <body>
     <div class="position-content">
-        <div class="content-block">
-            
-            {% if request.user.is_authenticated %}
-            <p>
-                <a href="{% url 'profile_change' %}">Изменить профиль</a>
-            </p>
-            {% endif %}
-
-
-            
-            {% if request.user.is_authenticated %}
-            {{ request.user }}
-            {% endif %}
-            
+        <div class="content-block">               
             {% block content %}
-
             {% endblock content %}
-
         </div>
     </div>
 

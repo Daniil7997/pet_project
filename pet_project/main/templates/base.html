@@ -1,16 +1,18 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../static/main/css/base.css">
+    <link rel="stylesheet" href="{% static '/css/base.css' %}">
     <title>{{title}}</title>
 </head>
 <body>
     <nav class="nav">
         <ul class="blue-li">
             <li>
-                <a href="">Мой профиль</a>
+                <a href="{% url 'my_profile' %}">Мой профиль</a>
             </li>
             |
             <li>
@@ -26,20 +28,35 @@
             </li>
         </ul>
 
+
         <ul class="log-reg">
+            {% if not request.user.is_authenticated %}
             <li>
-                <a href="">Войти</a>
+                <a href="{% url 'login' %}">Войти</a>
             </li>
             <p>|</p>
             <li>
-                <a href="">Зарегистрироваться</a>
+                <a href="{% url 'registration' %}">Зарегистрироваться</a>
             </li>
+            {% endif %}
+            
+        {% if request.user.is_authenticated %}
+        <li>
+            {{ request.user.email }}
+        </li>
+        <li>
+            <a href="{% url 'logout' %}">Выйти</a> 
+        </li>
+  
+        {% endif %}
+
         </ul>
     </nav>
 
     <div class="position-content">
         <div class="content-block">
-                        
+            {% block content %}
+            {% endblock %}
         </div>
     </div>
   

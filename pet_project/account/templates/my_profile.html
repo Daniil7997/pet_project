@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<form action="{% url 'my_profile' %}" method="post" enctype="multipart/form-data">
+    <h1>Мой профиль</h1>
+
+    <div class="my-profile">
+        <div>
+            {% if user.profile_photo %}
+            <img class="profile-photo" src="{{ user.profile_photo.url }}" alt="">
+            <link rel="stylesheet">
+            {% else %}
+            <img class="profile-photo" src="../../media/anon/no-photo.jpg" alt="">
+            {% endif %}
+            
+        </div>
+        <div>
+            <p class="user-name">
+                {% if user.i_search == 'W' %}
+                {{ user.name }}, {{ user.age }}, Ищу девушку.
+                {% endif %}
+                {% if user.i_search == 'M' %}
+                {{ user.name }}, {{ user.age }}, Ищу парня.
+                {% endif %}
+            </p>
+            <p class="user-about">
+                {{ user.about }}
+            </p>
+        </div>
+    </div>
+
+    <div class="form">  
+        {% csrf_token %}
+
+        <p>
+            <input type="submit" name="profile_photo-clear" value="Удалить фото профиля" id="profile_photo-clear_id">       
+        </p>
+     
+        <p>
+            {{ form.name.label }}
+            {{ form.name }}
+        </p>
+
+        <p>
+            {{ form.birthday.label }}
+            {{ form.birthday }}
+        </p>
+
+        <p>
+            {{ form.about.label }}
+            {{ form.about }}
+        </p>
+
+        <p>
+            Загрузить фотографию:
+            <input type="file" name="profile_photo" accept="image/*" id="id_profile_photo">
+        </p>
+
+        <p>
+            {{ form.sex.label }}
+            {{ form.sex }}
+        </p>
+
+        <p>
+            {{ form.i_search.label }}
+            {{ form.i_search }}
+        </p>
+ 
+        <div class="div-submit">
+            <input class="submit" type="submit" value="Сохранить">
+
+        </div>
+    </div>
+</form>
+
+{% endblock content %}
+
+
+
+

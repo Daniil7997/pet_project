@@ -10,7 +10,6 @@ class EmailAuthBackend(BaseBackend):
     def authenticate(self, request, email=None, password=None, **kwargs):
         try:
             user = self.USER_MODEL.objects.get(email=email)
-            print(f'{check_password(password, user.password)} - CHECK_PASSWORD')
         except (self.USER_MODEL.DoesNotExist, self.USER_MODEL.MultipleObjectsReturned):
             # Run the default password hasher once to reduce the timing
             # difference between an existing and a nonexistent user (#20760).
@@ -21,7 +20,6 @@ class EmailAuthBackend(BaseBackend):
                 return user
 
     def get_user(self, user_id):
-        print('вызван get_user')
         try:
             user = self.USER_MODEL.objects.get(pk=user_id)
         except self.USER_MODEL.DoesNotExist:
