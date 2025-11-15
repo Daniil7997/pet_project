@@ -5,13 +5,10 @@ from django import forms
 from django.contrib.auth.hashers import make_password
 from captcha.fields import CaptchaField, CaptchaTextInput
 
-from .models import Profile
+from .models import Profile, UserAuth
 
 
 class RegisterUserForm(forms.ModelForm):
-
-    # -- данные для модели Profile приложения account
-
     sex_choice = {'M': 'Мужской', 'W': 'Женский'}
     i_search_choice = {'M': 'Парня', 'W': 'Девушку'}
 
@@ -19,10 +16,7 @@ class RegisterUserForm(forms.ModelForm):
     i_search = forms.ChoiceField(label='Я ищу', choices=i_search_choice, widget=forms.RadioSelect)
     birthday = forms.DateField(label='Дата рождения', widget=forms.DateInput(attrs={'type': 'date'}))
     name = forms.CharField(label='Имя')
-
-    # -- поле для подтверждения пароля
     password2 = forms.CharField(label='Повторите пароль', widget=forms.PasswordInput)
-
     captcha_field = CaptchaField(widget=CaptchaTextInput(attrs={'placeholder': 'Введите код'}))
 
     class Meta:
@@ -36,11 +30,17 @@ class RegisterUserForm(forms.ModelForm):
             'password': forms.PasswordInput,
         }
 
-    def clean_isearch(self):
+    def clean_email(self):
         cd = self.cleaned_data
-        if 'isearch' not in cd:
+        if UserAuth.objects.filter(email=cd['email']).exists():
+            raise forms.ValidationError("Пользователь с таким email уже существует.")
+        return cd['email']
+
+    def clean_i_search(self):
+        cd = self.cleaned_data
+        if 'i_search' not in cd:
             raise forms.ValidationError('Выберите кого вы хотите найти.')
-        return cd['isearch']
+        return cd['i_search']
 
     def clean_password2(self):
         cd = self.cleaned_data
@@ -49,8 +49,6 @@ class RegisterUserForm(forms.ModelForm):
 
         if cd['password'] != cd['password2']:
             raise forms.ValidationError('Пароли не совпадают.')
-        # хеширование пароля
-        cd['password'] = make_password(cd['password'])
         return cd['password']
 
     def clean_sex(self):
@@ -65,18 +63,16 @@ class RegisterUserForm(forms.ModelForm):
             raise forms.ValidationError('Введите дату рождения.')
 
         birthday = self.cleaned_data['birthday']
-        today = date.today()
-        age = today - birthday
-        age = age.days / 365
+        dif_date = date.today() - birthday
+        age = int(dif_date.days / 365)
         if age < 18:
             raise forms.ValidationError('Вам еще нет 18. ')
-
         return birthday
 
     def clean_name(self):
         cd = self.cleaned_data
         if 'name' not in cd:
-            raise forms.ValidationError('Введите фамилию.')
+            raise forms.ValidationError('Введите имя.')
         return cd['name']
 
 

@@ -1,15 +1,5 @@
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models
-from django.conf import settings
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from rest_framework.authtoken.models import Token
-
-
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_auth_token(sender, instance=None, created=False, **kwargs):
-    if created:
-        Token.objects.create(user=instance)
 
 
 class UserAuth(AbstractBaseUser):
@@ -30,7 +20,7 @@ class Profile(models.Model):
     def user_photo_path(instance, filename):
         print('вызов USER_PHOTO_PATH')
         # instance — это экземпляр модели, к которой прикреплено поле
-        return f"users/{instance.auth.id}/photos/{filename}"
+        return f"users/{instance.id}/photos/{filename}"
 
     id = models.BigAutoField(primary_key=True)
     sex = models.CharField(verbose_name='Пол')

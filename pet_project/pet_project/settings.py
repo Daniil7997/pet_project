@@ -10,9 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 from datetime import timedelta
-from pathlib import Path
 import os
-from django.conf import settings
+
+from pathlib import Path
 
 from config.settings_config import config_databases, config_secret_key
 
@@ -32,7 +32,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -43,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework_simplejwt',
-    'rest_framework.authtoken',
+    'rest_framework',
     'account',
     'main',
     'captcha',
@@ -148,14 +147,14 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
 
     "ALGORITHM": "HS256",
-    "SIGNING_KEY": settings.SECRET_KEY,
+    "SIGNING_KEY": SECRET_KEY,
     "VERIFYING_KEY": "",
     "AUDIENCE": None,
     "ISSUER": None,
@@ -191,9 +190,8 @@ SIMPLE_JWT = {
 
 
 # ------------------ CAPTCHA
-
 CAPTCHA_LENGTH = 4  # Количество символов в капче.
-CAPTCHA_FONT_SIZE = 15  # Размер шрифта.
+CAPTCHA_FONT_SIZE = 28  # Размер шрифта.
 CAPTCHA_BACKGROUND_COLOR = '#1B083F'  # Цвет фона.
 CAPTCHA_FOREGROUND_COLOR = '#FFFFFF'  # Цвет текста.
 CAPTCHA_TIMEOUT = 5  # Время в минутах, через которое капча становится недействительной.
@@ -202,4 +200,4 @@ CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_arcs',)
 # определяет, какие функции "шума" будут применяться к изображению капчи
 #     'captcha.helpers.noise_arcs', <--- Добавляет дуги
 #     'captcha.helpers.noise_dots', <--- Добавляет точки
-#     'captcha.helpers.noise_null', <--- Функция, которая ничего не делает
+#     'captcha.helpers.noise_null', <--- Без шума>

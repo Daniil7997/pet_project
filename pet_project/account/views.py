@@ -1,13 +1,21 @@
+from datetime import date
+
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect
-from django.db import transaction
-from datetime import date
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
-from account.models import Profile, UserAuth
+from account.models import Profile
+from account.permissions import IsOwnerOrReadOnly
+from account.serializers import ProfileSerializer, RegisterUserSerializer
+from account.utils import registration_db_insert
 from account.forms import (
     RegisterUserForm,
     LoginUserForm,
@@ -22,25 +30,12 @@ class RegisterUser(CreateView):
 
     def form_valid(self, form):
         form_cd = form.cleaned_data
-        self.db_insert(form_cd)
+        try:
+            registration_db_insert(data=form_cd)
+        except Exception:
+            form.add_error(None, "Ошибка при регистрации")
+            return self.form_invalid(form)
         return HttpResponseRedirect(self.success_url)
-
-    @transaction.atomic
-    def db_insert(self, form_cd):
-        UserAuth.objects.create(
-            password=form_cd['password'],
-            email=form_cd['email']
-        )
-        user = UserAuth.objects.get(email=form_cd['email'])
-        user_id = user.id
-        print(f'{user_id} <----- USER_ID')
-        Profile.objects.create(
-            name=form_cd['name'],
-            birthday=form_cd['birthday'],
-            sex=form_cd['sex'],
-            i_search=form_cd['i_search'],
-            auth_id=user_id,
-        )
 
 
 def login_user(request):
@@ -54,7 +49,6 @@ def login_user(request):
             return redirect('home')
     else:
         form = LoginUserForm()
-
     context = {
         'form': form,
     }
@@ -64,11 +58,6 @@ def login_user(request):
 def logout_user(request):
     logout(request)
     return redirect('login')
-
-
-def profile_edit(request):
-    user = request.user
-    Profile.objects.get(auth=user)
 
 
 def my_profile(request):
@@ -82,22 +71,29 @@ def my_profile(request):
         return redirect('my_profile')
     else:
         form = ProfileData(instance=user)
-
     context = {'form': form, 'user': user}
     return render(request, 'my_profile.html', context=context)
 
 
+@api_view(['GET'])
+def user_list():
+    tmp = Profile.objects.all()
+    serializer = ProfileSerializer(tmp, many=True)
+    return Response(serializer.data)
 
 
-    # people = Person.objects.annotate(
-    #     age=Func(
-    #         ExtractYear(F('birth_date')),
-    #         ExtractMonth(F('birth_date')),
-    #         ExtractDay(F('birth_date')),
-    #         Value(today.year),
-    #         Value(today.month),
-    #         Value(today.day),
-    #         function='AGE',
-    #         output_field=IntegerField()
-    #     )
-    # ) функция для вычисления возраста через бд для большого количества людей
+class CreateUser(CreateAPIView):
+    serializer_class = RegisterUserSerializer
+    http_method_names = ['post']
+
+    def post(self, request, *args, **kwargs):  # Обработка POST
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()  # Вызовет .create() у сериализатора
+        return Response(serializer.data)
+
+
+class ProfileRUD(RetrieveUpdateDestroyAPIView):
+    serializer_class = ProfileSerializer
+    queryset = Profile.objects.all()
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
