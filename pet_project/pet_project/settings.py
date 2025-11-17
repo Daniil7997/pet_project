@@ -9,12 +9,14 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-from datetime import timedelta
 import os
+import sys
+from datetime import timedelta
 
 from pathlib import Path
 
-from config.settings_config import config_databases, config_secret_key
+from pet_project_config.settings_config import (DATABASES_USER, DATABASES_PASSWORD, DATABASES_HOST,
+                                                DATABASES_NAME, DATABASES_PORT, DATABASES_ENGINE, CONF_SECRET_KEY)
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config_secret_key
+SECRET_KEY = os.environ.get('ENV_SECRET_KEY', CONF_SECRET_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -81,7 +83,18 @@ WSGI_APPLICATION = 'pet_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = config_databases
+
+DATABASES = {
+    'default': {
+        'ENGINE': os.environ.get('ENV_DATABASES_ENGINE', DATABASES_ENGINE),
+        'NAME': os.environ.get('ENV_DATABASES_NAME', DATABASES_NAME),
+        'USER': os.environ.get('ENV_DATABASES_USER', DATABASES_USER),
+        'PASSWORD': os.environ.get('ENV_DATABASES_PASSWORD', DATABASES_PASSWORD),
+        'HOST': os.environ.get('ENV_DATABASES_HOST', DATABASES_HOST),
+        'PORT': os.environ.get('ENV_DATABASES_PORT', DATABASES_PORT)
+    }
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -201,3 +214,32 @@ CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_arcs',)
 #     'captcha.helpers.noise_arcs', <--- Добавляет дуги
 #     'captcha.helpers.noise_dots', <--- Добавляет точки
 #     'captcha.helpers.noise_null', <--- Без шума>
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            # Указываем, что хэндлер должен писать в stdout
+            'stream': sys.stdout,
+        },
+    },
+    'root': {
+        # 'handlers': ['console'], # Это можно использовать для захвата ВСЕХ логов
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO', # Или 'DEBUG' для более подробных логов
+            'propagate': False,
+        },
+        # Пример для вашего собственного приложения:
+        'myapp': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}

@@ -2,7 +2,6 @@ from datetime import date
 
 from django.contrib.auth import get_user_model
 from django import forms
-from django.contrib.auth.hashers import make_password
 from captcha.fields import CaptchaField, CaptchaTextInput
 
 from .models import Profile, UserAuth

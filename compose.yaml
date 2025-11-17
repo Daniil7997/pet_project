@@ -1,0 +1,45 @@
+services:
+  db:
+    image: bitnami/postgresql
+    container_name: postgres_db
+    environment:
+      POSTGRES_DB: ${DATABASES_NAME}
+      POSTGRES_USER: ${DATABASES_USER}
+      POSTGRES_PASSWORD: ${DATABASES_PASSWORD}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d DbForPetProject" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+
+  web:
+    build: .
+    container_name: pet_project
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "${WEB_APP_PORT}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ENV_SECRET_KEY: ${CONF_SECRET_KEY}
+      ENV_DATABASES_ENGINE: ${DATABASES_ENGINE}
+      ENV_DATABASES_NAME: ${DATABASES_NAME}
+      ENV_DATABASES_USER: ${DATABASES_USER}
+      ENV_DATABASES_PASSWORD: ${DATABASES_PASSWORD}
+      ENV_DATABASES_HOST: ${DATABASES_HOST}
+      ENV_DATABASES_PORT: ${DATABASES_PORT}
+      PYTHONUNBUFFERED: 1
+    networks:
+      - app_network
+
+volumes:
+  postgres_data:
+
+networks:
+  app_network:
+    driver: bridge

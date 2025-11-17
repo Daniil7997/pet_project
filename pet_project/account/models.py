@@ -27,7 +27,7 @@ class Profile(models.Model):
     name = models.CharField(max_length=20, verbose_name='Имя')
     birthday = models.DateField(verbose_name='Дата рождения')
     about = models.CharField(max_length=250, blank=True, verbose_name='О себе')
-    profile_photo = models.ImageField(blank=True, verbose_name='Фото профиля', upload_to=user_photo_path)
+    profile_photo = models.ImageField(blank=True, default='', verbose_name='Фото профиля', upload_to=user_photo_path)
     i_search = models.CharField(verbose_name='Я ищу')
     auth = models.OneToOneField(UserAuth, on_delete=models.CASCADE, related_name='profile', unique=True)
 

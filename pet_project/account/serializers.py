@@ -1,5 +1,7 @@
 from datetime import date
 
+from django.contrib.auth.hashers import make_password
+from django.db import transaction
 from rest_framework import serializers
 
 from account.models import Profile, UserAuth
@@ -37,9 +39,21 @@ class RegisterUserSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
     password_confirm = serializers.CharField(write_only=True)
 
+    @transaction.atomic
     def create(self, validated_data):
-        user = registration_db_insert(validated_data)
-        return user
+        validated_data['password'] = make_password(validated_data['password'])
+        user = UserAuth.objects.create(
+            password=validated_data['password'],
+            email=validated_data['auth']['email']
+        )
+        user_profile = Profile.objects.create(
+            name=validated_data['name'],
+            birthday=validated_data['birthday'],
+            sex=validated_data['sex'],
+            i_search=validated_data['i_search'],
+            auth_id=user.id,
+        )
+        return user_profile
 
     def validate_birthday(self, birthday):
         dif_date = date.today() - birthday

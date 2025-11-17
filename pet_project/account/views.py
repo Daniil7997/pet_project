@@ -1,21 +1,21 @@
 from datetime import date
 
+from django.contrib.auth.hashers import make_password
+from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect
-from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from account.models import Profile
+from account.models import Profile, UserAuth
 from account.permissions import IsOwnerOrReadOnly
 from account.serializers import ProfileSerializer, RegisterUserSerializer
-from account.utils import registration_db_insert
 from account.forms import (
     RegisterUserForm,
     LoginUserForm,
@@ -31,11 +31,29 @@ class RegisterUser(CreateView):
     def form_valid(self, form):
         form_cd = form.cleaned_data
         try:
-            registration_db_insert(data=form_cd)
+            self.registration_db_insert(data=form_cd)
         except Exception:
-            form.add_error(None, "Ошибка при регистрации")
+            print(f'{Exception} - ИСКЛЮЧЕНИЕ')
+            form.add_error(None, f"Ошибка при регистрации {Exception}")
             return self.form_invalid(form)
         return HttpResponseRedirect(self.success_url)
+
+    @transaction.atomic
+    def registration_db_insert(self, data):
+        print(data, 'DATA UTILS.py')
+        data['password'] = make_password(data['password'])
+        user = UserAuth.objects.create(
+            password=data['password'],
+            email=data['email']
+        )
+        user_profile = Profile.objects.create(
+            name=data['name'],
+            birthday=data['birthday'],
+            sex=data['sex'],
+            i_search=data['i_search'],
+            auth_id=user.id,
+        )
+        return user_profile
 
 
 def login_user(request):
