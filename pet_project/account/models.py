@@ -1,10 +1,13 @@
+import datetime
+
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models
 
 
 class UserAuth(AbstractBaseUser):
     email = models.EmailField(unique=True, max_length=50)
-    is_active = models.BooleanField(default=True)  # (True/False) право на авторизацию.
+    is_active = models.BooleanField(default=False)  # (True/False) право на авторизацию.
+    created_at = models.DateField(auto_now_add=True)
 
     # из AbstractBaseUser наследуются следующие поля :
     # password = models.CharField(_("password"), max_length=128)
@@ -17,9 +20,9 @@ class UserAuth(AbstractBaseUser):
 
 
 class Profile(models.Model):
-    def user_photo_path(instance, filename):
+
+    def user_photo_path(self, instance, filename):
         print('вызов USER_PHOTO_PATH')
-        # instance — это экземпляр модели, к которой прикреплено поле
         return f"users/{instance.id}/photos/{filename}"
 
     id = models.BigAutoField(primary_key=True)

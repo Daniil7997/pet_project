@@ -15,8 +15,10 @@ from datetime import timedelta
 
 from pathlib import Path
 
-from pet_project_config.settings_config import (DATABASES_USER, DATABASES_PASSWORD, DATABASES_HOST,
-                                                DATABASES_NAME, DATABASES_PORT, DATABASES_ENGINE, CONF_SECRET_KEY)
+from pet_project_config.settings_config import (
+    DATABASES_USER, DATABASES_PASSWORD, DATABASES_HOST,
+    DATABASES_NAME, DATABASES_PORT, DATABASES_ENGINE,
+    CONF_SECRET_KEY, RABBITMQ_USER, RABBITMQ_PASSWORD)
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -95,6 +97,8 @@ DATABASES = {
     }
 }
 
+print(f'----------------------------DATABASES -------------------------------> \n{DATABASES} \n <------------------------ DATABASES-----------------------')
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -159,6 +163,7 @@ REST_FRAMEWORK = {
     ]
 }
 
+# ------------------ JWT / TOKEN -----------------
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
@@ -202,7 +207,7 @@ SIMPLE_JWT = {
 }
 
 
-# ------------------ CAPTCHA
+# ------------------ CAPTCHA ---------------------
 CAPTCHA_LENGTH = 4  # Количество символов в капче.
 CAPTCHA_FONT_SIZE = 28  # Размер шрифта.
 CAPTCHA_BACKGROUND_COLOR = '#1B083F'  # Цвет фона.
@@ -215,6 +220,8 @@ CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_arcs',)
 #     'captcha.helpers.noise_dots', <--- Добавляет точки
 #     'captcha.helpers.noise_null', <--- Без шума>
 
+
+# ----------------- Логирование ---------------------
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -226,20 +233,29 @@ LOGGING = {
         },
     },
     'root': {
-        # 'handlers': ['console'], # Это можно использовать для захвата ВСЕХ логов
+        'handlers': ['console'],  # Это можно использовать для захвата ВСЕХ логов
         'level': 'INFO',
     },
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'level': 'INFO', # Или 'DEBUG' для более подробных логов
-            'propagate': False,
-        },
-        # Пример для вашего собственного приложения:
-        'myapp': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
+            'level': 'INFO',  # Или 'DEBUG' для более подробных логов
             'propagate': False,
         },
     },
 }
+
+# ------------------- CELERY ---------------------
+
+get_rabbitmq_user = os.environ.get('ENV_RABBITMQ_USER', RABBITMQ_USER)
+get_rabbitmq_password = os.environ.get('ENV_RABBITMQ_PASSWORD', RABBITMQ_PASSWORD)
+
+CELERY_BROKER_URL = f'pyamqp://{get_rabbitmq_user}:{get_rabbitmq_password}@rabbitmq:5672//'
+
+# Бэкенд для хранения результатов выполнения задач
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+# Формат сериализации данных
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'

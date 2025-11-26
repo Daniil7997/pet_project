@@ -4,4 +4,7 @@ from django.shortcuts import render, redirect
 # Create your views here.
 
 def home(request):
-    return render(request, 'base.html')
+    context = {
+        'title': 'Главная'
+    }
+    return render(request, 'base.html', context=context)

@@ -5,7 +5,6 @@ from django.db import transaction
 from rest_framework import serializers
 
 from account.models import Profile, UserAuth
-from account.utils import registration_db_insert
 
 
 class ProfileSerializer(serializers.ModelSerializer):

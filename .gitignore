@@ -1,6 +1,7 @@
 # Создано для проекта
 pet_project_config/
 http/
+**/celerybeat-schedule
 
 # Django #
 *.log

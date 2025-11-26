@@ -27,20 +27,19 @@ class RegisterUser(CreateView):
     form_class = RegisterUserForm
     template_name = 'registration.html'
     success_url = reverse_lazy('login')
+    extra_context = {'title': 'Регистрация'}
 
     def form_valid(self, form):
         form_cd = form.cleaned_data
         try:
             self.registration_db_insert(data=form_cd)
         except Exception:
-            print(f'{Exception} - ИСКЛЮЧЕНИЕ')
-            form.add_error(None, f"Ошибка при регистрации {Exception}")
+            form.add_error(None, f"Ошибка при регистрации")
             return self.form_invalid(form)
         return HttpResponseRedirect(self.success_url)
 
     @transaction.atomic
     def registration_db_insert(self, data):
-        print(data, 'DATA UTILS.py')
         data['password'] = make_password(data['password'])
         user = UserAuth.objects.create(
             password=data['password'],
@@ -57,7 +56,7 @@ class RegisterUser(CreateView):
 
 
 def login_user(request):
-    if request.POST:
+    if request.method == 'POST':
         form = LoginUserForm(request.POST)
         email = request.POST['email']
         password = request.POST['password']
@@ -69,6 +68,7 @@ def login_user(request):
         form = LoginUserForm()
     context = {
         'form': form,
+        'title': 'Вход',
     }
     return render(request, 'login.html', context=context)
 
@@ -82,7 +82,7 @@ def my_profile(request):
     user = Profile.objects.get(auth__email=request.user.email)
     dif_age = date.today() - user.birthday
     user.age = int(dif_age.days / 365)
-    if request.POST:
+    if request.method == 'POST':
         form = ProfileData(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save()
