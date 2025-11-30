@@ -14,12 +14,11 @@ import sys
 from datetime import timedelta
 
 from pathlib import Path
+from dotenv import load_dotenv
 
-from pet_project_config.settings_config import (
-    DATABASES_USER, DATABASES_PASSWORD, DATABASES_HOST,
-    DATABASES_NAME, DATABASES_PORT, DATABASES_ENGINE,
-    CONF_SECRET_KEY, RABBITMQ_USER, RABBITMQ_PASSWORD)
 
+path_to_conf_env = f'{Path(__file__).resolve().parent}/.env'
+load_dotenv(verbose=True, dotenv_path=path_to_conf_env)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('ENV_SECRET_KEY', CONF_SECRET_KEY)
+SECRET_KEY = os.environ.get('ENV_SECRET_KEY', os.environ.get('CONF_SECRET_KEY'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -88,16 +87,14 @@ WSGI_APPLICATION = 'pet_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.environ.get('ENV_DATABASES_ENGINE', DATABASES_ENGINE),
-        'NAME': os.environ.get('ENV_DATABASES_NAME', DATABASES_NAME),
-        'USER': os.environ.get('ENV_DATABASES_USER', DATABASES_USER),
-        'PASSWORD': os.environ.get('ENV_DATABASES_PASSWORD', DATABASES_PASSWORD),
-        'HOST': os.environ.get('ENV_DATABASES_HOST', DATABASES_HOST),
-        'PORT': os.environ.get('ENV_DATABASES_PORT', DATABASES_PORT)
+        'ENGINE': os.environ.get('ENV_DATABASES_ENGINE', os.environ.get('DATABASES_ENGINE')),
+        'NAME': os.environ.get('ENV_DATABASES_NAME', os.environ.get('DATABASES_NAME')),
+        'USER': os.environ.get('ENV_DATABASES_USER', os.environ.get('DATABASES_USER')),
+        'PASSWORD': os.environ.get('ENV_DATABASES_PASSWORD', os.environ.get('DATABASES_PASSWORD')),
+        'HOST': os.environ.get('ENV_DATABASES_HOST', os.environ.get('DATABASES_HOST')),
+        'PORT': os.environ.get('ENV_DATABASES_PORT', os.environ.get('DATABASES_PORT'))
     }
 }
-
-print(f'----------------------------DATABASES -------------------------------> \n{DATABASES} \n <------------------------ DATABASES-----------------------')
 
 
 # Password validation
@@ -163,7 +160,7 @@ REST_FRAMEWORK = {
     ]
 }
 
-# ------------------ JWT / TOKEN -----------------
+# --------------------------- JWT / TOKEN ---------------------------
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
@@ -207,7 +204,7 @@ SIMPLE_JWT = {
 }
 
 
-# ------------------ CAPTCHA ---------------------
+# --------------------------------- CAPTCHA -------------------------------------
 CAPTCHA_LENGTH = 4  # Количество символов в капче.
 CAPTCHA_FONT_SIZE = 28  # Размер шрифта.
 CAPTCHA_BACKGROUND_COLOR = '#1B083F'  # Цвет фона.
@@ -221,7 +218,7 @@ CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_arcs',)
 #     'captcha.helpers.noise_null', <--- Без шума>
 
 
-# ----------------- Логирование ---------------------
+# ------------------------------- Логирование -----------------------------------
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -245,17 +242,29 @@ LOGGING = {
     },
 }
 
-# ------------------- CELERY ---------------------
+# ------------------------- REDIS ------ CELERY ------ RABBITMQ -------------------------
 
-get_rabbitmq_user = os.environ.get('ENV_RABBITMQ_USER', RABBITMQ_USER)
-get_rabbitmq_password = os.environ.get('ENV_RABBITMQ_PASSWORD', RABBITMQ_PASSWORD)
+get_rabbitmq_user = os.environ.get('ENV_RABBITMQ_USER', os.environ.get('RABBITMQ_USER'))
+get_rabbitmq_password = os.environ.get('ENV_RABBITMQ_PASSWORD', os.environ.get('RABBITMQ_PASSWORD'))
+get_redis_password = os.environ.get('ENV_REDIS_PASSWORD', os.environ.get('REDIS_PASSWORD'))
 
 CELERY_BROKER_URL = f'pyamqp://{get_rabbitmq_user}:{get_rabbitmq_password}@rabbitmq:5672//'
 
 # Бэкенд для хранения результатов выполнения задач
-# CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = f"redis://:{get_redis_password}@redis:6379/0"
 
 # Формат сериализации данных
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"redis://:{get_redis_password}@redis:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "CONNECTION_POOL_KWARGS": {"max_connections": 100},
+        }
+    }
+}
