@@ -15,7 +15,7 @@ from rest_framework.response import Response
 
 from account.models import Profile, UserAuth
 from account.permissions import IsOwnerOrReadOnly
-from account.serializers import ProfileSerializer, RegisterUserSerializer
+from account.serializers import ProfileSerializer
 from account.forms import (
     RegisterUserForm,
     LoginUserForm,
@@ -34,7 +34,7 @@ class RegisterUser(CreateView):
         try:
             self.registration_db_insert(data=form_cd)
         except Exception:
-            form.add_error(None, f"Ошибка при регистрации")
+            form.add_error(None, "Ошибка при регистрации")
             return self.form_invalid(form)
         return HttpResponseRedirect(self.success_url)
 
@@ -101,17 +101,17 @@ def user_list():
 
 
 class CreateUser(CreateAPIView):
-    serializer_class = RegisterUserSerializer
+    serializer_class = ProfileSerializer
     http_method_names = ['post']
 
-    def post(self, request, *args, **kwargs):  # Обработка POST
+    def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()  # Вызовет .create() у сериализатора
+        serializer.save()
         return Response(serializer.data)
 
 
 class ProfileRUD(RetrieveUpdateDestroyAPIView):
     serializer_class = ProfileSerializer
-    queryset = Profile.objects.all()
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+    queryset = Profile.objects.all()
